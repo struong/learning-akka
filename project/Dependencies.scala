@@ -25,7 +25,6 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % Versions.ScalaLogging
   )
 
-
   val cats = Seq(
     "org.typelevel" %% "cats-core" % Versions.Cats,
     "org.typelevel" %% "cats-effect" % Versions.CatsEffect
