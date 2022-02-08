@@ -1,5 +1,7 @@
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
+
+import scala.concurrent.duration.DurationInt
 
 object TypedStatelessActors {
 
@@ -12,16 +14,38 @@ object TypedStatelessActors {
 
   val emotionalMutableActor: Behavior[SimpleThing] = Behaviors.setup { context =>
     // spin up the actor state
-    var happieness = 0
-
-
+    var happieness = 0 // to help create a stateful actor
 
     // behavior of the actor
-//    Behaviors.receiveMessage()
-    ???
+    Behaviors.receiveMessage {
+      case EatChocolate =>
+        context.log.info(s"($happieness) Eating chocolate, getting a shot of dopamine")
+        happieness += 1
+        Behaviors.same // Keep the exact same behavior the same to the next message this Actor will receive
+      case WashDishes =>
+        context.log.info(s"($happieness) Doing a chore, womp, womp...")
+        happieness -= 2
+        Behaviors.same
+      case LearnAkka =>
+        context.log.info(s"($happieness) Learning Akka, this is cool!")
+        happieness += 100
+        Behaviors.same
+      case _ =>
+        context.log.info(s"($happieness) Received something I don't know")
+        Behaviors.same
+    }
   }
 
   def main(args: Array[String]): Unit = {
+    val emotionalActorSystem = ActorSystem(emotionalMutableActor, "EmotionalSystem")
 
+    emotionalActorSystem ! EatChocolate
+    emotionalActorSystem ! EatChocolate
+    emotionalActorSystem ! EatChocolate
+    emotionalActorSystem ! WashDishes
+    emotionalActorSystem ! LearnAkka
+
+    Thread.sleep(1.seconds.toMillis) // would use some external call back to shut down your system in production
+    emotionalActorSystem.terminate()
   }
 }
