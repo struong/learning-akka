@@ -40,8 +40,10 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-actor-typed" % Versions.Akka,
     "com.typesafe.akka" %% "akka-actor-testkit-typed" % Versions.Akka % Test,
 
-    // Http
+    // Stream
     "com.typesafe.akka" %% "akka-stream" % Versions.Akka,
+
+    // Http
     "com.typesafe.akka" %% "akka-http" % Versions.AkkaHttp,
     "com.typesafe.akka" %% "akka-http-xml" % Versions.AkkaHttp,
 

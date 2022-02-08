@@ -3,6 +3,7 @@ import akka.actor.typed.scaladsl.Behaviors
 
 import scala.concurrent.duration.DurationInt
 
+// https://www.youtube.com/watch?v=gwZjdRQTPu8
 object TypedStatelessActors {
 
   trait SimpleThing
