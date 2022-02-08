@@ -11,8 +11,7 @@ object TypedStatelessActors {
   case object LearnAkka extends SimpleThing
 
   // State - mutable piece of data
-
-  val emotionalMutableActor: Behavior[SimpleThing] = Behaviors.setup { context =>
+  val emotionalMutableActor: Behavior[SimpleThing] = Behaviors.setup { context => // Behaviours.setup usually used for stateful setups
     // spin up the actor state
     var happieness = 0 // to help create a stateful actor
 
@@ -36,8 +35,27 @@ object TypedStatelessActors {
     }
   }
 
+  // stateless setup - not truly recursive in Akka, it returns immediately with a new Behavior object
+  def emotionalFunctionalActor(happieness: Int = 0): Behavior[SimpleThing] = Behaviors.receive { (context, message) =>
+    message match {
+      case EatChocolate =>
+        context.log.info(s"($happieness) Eating chocolate, getting a shot of dopamine")
+        emotionalFunctionalActor(happieness + 1) // new behaviour
+      case WashDishes =>
+        context.log.info(s"($happieness) Doing a chore, womp, womp...")
+        emotionalFunctionalActor(happieness - 2)
+      case LearnAkka =>
+        context.log.info(s"($happieness) Learning Akka, this is cool!")
+        emotionalFunctionalActor(happieness + 100)
+      case _ =>
+        context.log.info(s"($happieness) Received something I don't know")
+        Behaviors.same
+    }
+  }
+
   def main(args: Array[String]): Unit = {
-    val emotionalActorSystem = ActorSystem(emotionalMutableActor, "EmotionalSystem")
+    // val emotionalActorSystem = ActorSystem(emotionalMutableActor, "EmotionalSystem") // stateful version
+    val emotionalActorSystem = ActorSystem(emotionalFunctionalActor(), "EmotionalSystem") // stateless version
 
     emotionalActorSystem ! EatChocolate
     emotionalActorSystem ! EatChocolate
